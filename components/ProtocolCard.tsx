@@ -79,7 +79,7 @@ export function ProtocolCard({ protocol, onClick }: ProtocolCardProps) {
         {protocol.short_description}
       </p>
 
-      {/* Metrics - Matching your design */}
+      {/* Metrics - 2x2 Grid */}
       <div className="grid grid-cols-2 gap-4 mb-4">
         {/* Raised */}
         <div>
