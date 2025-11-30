@@ -39,11 +39,13 @@ export function ProtocolEditor({ protocolId, onClose, onSave }: ProtocolEditorPr
     expected_costs: 30,
     listed_days: 3,
     tasks: ['Daily Check-in', 'Staking', 'Social Tasks'],
+    chains: [],
   })
 
   const [investorInput, setInvestorInput] = useState('')
   const [riskFactorInput, setRiskFactorInput] = useState('')
   const [taskInput, setTaskInput] = useState('')
+  const [chainInput, setChainInput] = useState('')
 
   useEffect(() => {
     if (protocolId) {
@@ -176,6 +178,23 @@ export function ProtocolEditor({ protocolId, onClose, onSave }: ProtocolEditorPr
     })
   }
 
+  const addChain = () => {
+    if (chainInput.trim()) {
+      setFormData({
+        ...formData,
+        chains: [...(formData.chains || []), chainInput.trim()]
+      })
+      setChainInput('')
+    }
+  }
+
+  const removeChain = (index: number) => {
+    setFormData({
+      ...formData,
+      chains: formData.chains?.filter((_, i) => i !== index)
+    })
+  }
+
   const previewProtocol: Protocol = {
     id: protocolId || 'preview',
     name: formData.name || 'Untitled Protocol',
@@ -203,6 +222,7 @@ export function ProtocolEditor({ protocolId, onClose, onSave }: ProtocolEditorPr
     expected_costs: formData.expected_costs || 30,
     listed_days: formData.listed_days || 3,
     tasks: formData.tasks || ['Daily Check-in', 'Staking', 'Social Tasks'],
+    chains: formData.chains || [],
     last_updated: new Date().toISOString(),
     created_at: new Date().toISOString(),
   }
@@ -594,6 +614,42 @@ export function ProtocolEditor({ protocolId, onClose, onSave }: ProtocolEditorPr
                   <span className="text-sm font-mono">{investor}</span>
                   <button
                     onClick={() => removeInvestor(index)}
+                    className="text-text-secondary hover:text-white"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Chains */}
+          <div className="space-y-4 pt-6 border-t border-border">
+            <h3 className="text-lg font-display font-bold">Chains</h3>
+
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={chainInput}
+                onChange={(e) => setChainInput(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && addChain()}
+                className="flex-1 px-4 py-2 rounded-lg bg-surface border border-border focus:border-white transition-colors outline-none font-mono text-sm"
+                placeholder="Ethereum"
+              />
+              <button
+                onClick={addChain}
+                className="px-4 py-2 rounded-lg bg-white text-black hover:bg-white/90 transition-colors font-mono text-sm"
+              >
+                Add
+              </button>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {formData.chains?.map((chain, index) => (
+                <div key={index} className="flex items-center gap-2 px-3 py-1 rounded-lg bg-surface-light">
+                  <span className="text-sm font-mono">{chain}</span>
+                  <button
+                    onClick={() => removeChain(index)}
                     className="text-text-secondary hover:text-white"
                   >
                     <X className="w-3 h-3" />

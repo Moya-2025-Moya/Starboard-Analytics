@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Header } from '@/components/Header'
+import { Filter, Settings, Anchor } from 'lucide-react'
 import { ProtocolCard } from '@/components/ProtocolCard'
 import { DetailPanel } from '@/components/DetailPanel'
 import { AuthModal } from '@/components/AuthModal'
@@ -52,28 +52,62 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen flex flex-col">
-      <Header
-        isSubscribed={isSubscribed}
-        onAuthClick={() => setShowAuthModal(true)}
-      />
+    <main className="min-h-screen">
+      {/* Top Navigation Bar */}
+      <div className="sticky top-0 z-30 bg-background/95 backdrop-blur-xl border-b border-border">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            {/* Left: Logo and Info */}
+            <div className="flex items-center gap-3">
+              <Anchor className="w-8 h-8 text-white" />
+              <div>
+                <h1 className="text-xl font-display font-bold text-white tracking-wide">
+                  Starboard Analytics
+                </h1>
+                <p className="text-xs text-text-secondary">
+                  Primary market coverage for early-stage protocols
+                </p>
+              </div>
+              <div className="ml-4 px-3 py-1 rounded-lg glass border border-border/50">
+                <span className="text-xs text-text-secondary font-mono">Last Update: </span>
+                <span className="text-xs font-mono font-bold text-white">
+                  {lastUpdate || 'Loading...'}
+                </span>
+              </div>
+            </div>
 
-      <div className={`container mx-auto px-4 py-8 transition-all duration-300 ${selectedProtocol ? 'max-w-full pr-0' : 'max-w-7xl'}`}>
-        {/* Hero Section */}
-        <div className="text-center mb-8 mt-6">
-          <h1 className="text-4xl font-display font-bold mb-3 text-white tracking-wide">
-            Starboard Analytics
-          </h1>
-          <p className="text-text-secondary text-sm mb-4">
-            Primary market coverage for early-stage protocols
-          </p>
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg glass border border-border/50">
-            <span className="text-xs text-text-secondary font-mono uppercase tracking-wider">Last Update</span>
-            <span className="text-sm font-mono font-bold text-white">
-              {lastUpdate || 'Loading...'}
-            </span>
+            {/* Right: Action Buttons */}
+            <div className="flex items-center gap-2">
+              {/* Logo/Subscribe Button */}
+              <button
+                onClick={() => setShowAuthModal(true)}
+                className="p-2 hover:bg-surface-light rounded-lg transition-colors"
+                title="Subscribe"
+              >
+                <Anchor className="w-5 h-5 text-gray-400 hover:text-white transition-colors" />
+              </button>
+
+              {/* Filter Button */}
+              <button
+                className="p-2 hover:bg-surface-light rounded-lg transition-colors"
+                title="Filter"
+              >
+                <Filter className="w-5 h-5 text-gray-400 hover:text-white transition-colors" />
+              </button>
+
+              {/* Settings Button */}
+              <button
+                className="p-2 hover:bg-surface-light rounded-lg transition-colors"
+                title="Settings"
+              >
+                <Settings className="w-5 h-5 text-gray-400 hover:text-white transition-colors" />
+              </button>
+            </div>
           </div>
         </div>
+      </div>
+
+      <div className={`container mx-auto px-6 py-6 transition-all duration-300 ${selectedProtocol ? 'max-w-full pr-0' : 'max-w-7xl'}`}>
 
         {/* Protocol Grid */}
         {loading ? (
@@ -101,24 +135,6 @@ export default function Home() {
             No protocols found. Check back soon!
           </div>
         )}
-
-        {/* Stats Footer */}
-        <div className="mt-16 pt-8 border-t border-border/30">
-          <div className="grid grid-cols-3 gap-4 max-w-3xl mx-auto">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-white mb-1">{protocols.length}</div>
-              <div className="text-xs text-text-secondary">Active Protocols</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-white mb-1">98%</div>
-              <div className="text-xs text-text-secondary">Success Rate</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-white mb-1">Early</div>
-              <div className="text-xs text-text-secondary">Entry Focus</div>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Detail Panel */}

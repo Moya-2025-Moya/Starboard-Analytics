@@ -42,6 +42,7 @@ CREATE TABLE protocols (
     expected_costs DECIMAL(10,2) DEFAULT 30,
     listed_days INTEGER DEFAULT 3,
     tasks TEXT[] DEFAULT ARRAY['Daily Check-in', 'Staking', 'Social Tasks'],
+    chains TEXT[] DEFAULT '{}',
     last_updated TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

@@ -34,6 +34,7 @@ export interface Protocol {
   expected_costs?: number
   listed_days?: number
   tasks?: string[]
+  chains?: string[]
 }
 
 export interface User {

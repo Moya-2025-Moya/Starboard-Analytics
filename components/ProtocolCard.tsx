@@ -29,36 +29,19 @@ export function ProtocolCard({ protocol, onClick }: ProtocolCardProps) {
       onClick={onClick}
       className="glass rounded-xl p-6 cursor-pointer border border-border hover:border-white/30 transition-all duration-300 hover:scale-[1.01] relative"
     >
-      {/* Header with Logo */}
+      {/* Header - No Logo, just text */}
       <div className="flex items-start justify-between mb-4">
-        <div className="flex items-start gap-3">
-          {/* Logo */}
-          {protocol.logo_url ? (
-            <img
-              src={protocol.logo_url}
-              alt={protocol.name}
-              className="w-12 h-12 rounded-lg flex-shrink-0"
-            />
-          ) : (
-            <div className="w-12 h-12 rounded-lg bg-surface-light flex items-center justify-center flex-shrink-0">
-              <span className="text-xl font-bold text-white font-display">
-                {protocol.name[0]}
-              </span>
-            </div>
-          )}
-
-          {/* Name and Category */}
-          <div className="flex-1">
-            <h3 className="font-display text-base font-bold tracking-wide leading-tight mb-1">
-              {protocol.name}
-            </h3>
-            <span className="text-xs text-text-secondary uppercase tracking-widest">
-              {protocol.category}
-            </span>
-          </div>
+        {/* Name and Category */}
+        <div className="flex-1">
+          <h3 className="font-display text-base font-bold tracking-wide leading-tight mb-1">
+            {protocol.name}
+          </h3>
+          <span className="text-xs text-text-secondary uppercase tracking-widest">
+            {protocol.category}
+          </span>
         </div>
 
-        {/* Link Icons */}
+        {/* Link Icons - X and Website */}
         <div className="flex items-center gap-1">
           {protocol.website_url && (
             <button
@@ -78,6 +61,16 @@ export function ProtocolCard({ protocol, onClick }: ProtocolCardProps) {
               <Twitter className="w-4 h-4 text-gray-400 hover:text-white transition-colors" />
             </button>
           )}
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              onClick()
+            }}
+            className="p-1.5 hover:bg-surface-light rounded-lg transition-colors"
+            title="Close"
+          >
+            <X className="w-4 h-4 text-gray-400 hover:text-white transition-colors" />
+          </button>
         </div>
       </div>
 
@@ -126,7 +119,7 @@ export function ProtocolCard({ protocol, onClick }: ProtocolCardProps) {
       </div>
 
       {/* What to do */}
-      <div className="mb-4">
+      <div className="mb-4 pt-4 border-t border-border/30">
         <div className="text-xs text-text-secondary mb-2">What to do</div>
         <div className="flex flex-wrap gap-2">
           {(protocol.tasks || ['Daily Check-in', 'Staking', 'Social Tasks']).map((task, index) => (
@@ -142,7 +135,7 @@ export function ProtocolCard({ protocol, onClick }: ProtocolCardProps) {
 
       {/* Lead Investors */}
       {protocol.lead_investors.length > 0 && (
-        <div className="pt-4 border-t border-border/30">
+        <div className="mb-4 pt-4 border-t border-border/30">
           <div className="text-xs text-text-secondary mb-2">Lead Investors</div>
           <div className="flex flex-wrap gap-2">
             {protocol.lead_investors.map((investor) => (
@@ -151,6 +144,23 @@ export function ProtocolCard({ protocol, onClick }: ProtocolCardProps) {
                 className="px-3 py-1 rounded bg-surface-light text-xs"
               >
                 {investor}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Chains */}
+      {protocol.chains && protocol.chains.length > 0 && (
+        <div className="pt-4 border-t border-border/30">
+          <div className="text-xs text-text-secondary mb-2">Chains</div>
+          <div className="flex flex-wrap gap-2">
+            {protocol.chains.map((chain) => (
+              <span
+                key={chain}
+                className="px-3 py-1 rounded bg-surface-light text-xs"
+              >
+                {chain}
               </span>
             ))}
           </div>
