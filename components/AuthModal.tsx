@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { X, Mail, Lock, Loader } from 'lucide-react'
 import { useAuth } from '@/lib/hooks/useAuth'
+import { Toast } from './Toast'
 
 interface AuthModalProps {
   onClose: () => void
@@ -14,15 +15,13 @@ export function AuthModal({ onClose, onSuccess }: AuthModalProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [isSuccess, setIsSuccess] = useState(false)
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
   const { signIn, signUp } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setError(null)
-    setIsSuccess(false)
+    setToast(null)
 
     try {
       const { data, error } = isSignUp
@@ -34,21 +33,31 @@ export function AuthModal({ onClose, onSuccess }: AuthModalProps) {
       if (error) throw error
 
       if (isSignUp) {
-        // Show success message for sign up
-        setIsSuccess(true)
-        setError('Account created! Please check your email to confirm your account.')
-        setTimeout(() => {
-          setError(null)
-          setIsSuccess(false)
-        }, 5000)
+        // Show success toast for sign up
+        setToast({
+          type: 'success',
+          message: 'Account created! Please check your email to confirm your account.'
+        })
+        // Clear form
+        setEmail('')
+        setPassword('')
       } else {
-        // Sign in successful
-        onSuccess()
+        // Show success toast for sign in
+        setToast({
+          type: 'success',
+          message: 'Successfully signed in! Welcome back.'
+        })
+        // Close modal after delay
+        setTimeout(() => {
+          onSuccess()
+        }, 1500)
       }
     } catch (err) {
       console.error('Auth error:', err)
-      setError(err instanceof Error ? err.message : 'Authentication failed')
-      setIsSuccess(false)
+      setToast({
+        type: 'error',
+        message: err instanceof Error ? err.message : 'Authentication failed. Please try again.'
+      })
     } finally {
       setLoading(false)
     }
