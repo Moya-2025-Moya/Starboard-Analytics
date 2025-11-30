@@ -1,12 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Filter, Settings, UserCircle } from 'lucide-react'
+import { Filter, Settings, UserCircle, LogOut } from 'lucide-react'
 import Image from 'next/image'
 import { ProtocolCard } from '@/components/ProtocolCard'
 import { DetailPanel } from '@/components/DetailPanel'
 import { AuthModal } from '@/components/AuthModal'
 import { useProtocols } from '@/lib/hooks/useProtocols'
+import { useAuth } from '@/lib/hooks/useAuth'
 import type { Protocol } from '@/types'
 
 export const dynamic = 'force-dynamic'
@@ -17,6 +18,7 @@ export default function Home() {
   const [isSubscribed, setIsSubscribed] = useState(false)
   const [lastUpdate, setLastUpdate] = useState<string>('')
   const { protocols, loading } = useProtocols()
+  const { user, isSubscribed: userIsSubscribed, signOut } = useAuth()
 
   // Calculate the most recent update date from all protocols
   useEffect(() => {
@@ -50,6 +52,20 @@ export default function Home() {
 
   const handleClosePanel = () => {
     setSelectedProtocol(null)
+  }
+
+  // Mask email with asterisks (show first 2 chars and last 2 chars)
+  const maskEmail = (email: string) => {
+    const [name, domain] = email.split('@')
+    if (name.length <= 4) {
+      return name.charAt(0) + '*'.repeat(Math.max(1, name.length - 2)) + name.charAt(name.length - 1) + '@' + domain
+    }
+    return name.charAt(0) + '*'.repeat(name.length - 2) + name.charAt(name.length - 1) + '@' + domain
+  }
+
+  const handleLogout = async () => {
+    await signOut()
+    setIsSubscribed(false)
   }
 
   return (
@@ -95,14 +111,30 @@ export default function Home() {
 
             {/* Right: Action Buttons */}
             <div className="flex items-center gap-2">
-              {/* User/Login Button */}
-              <button
-                onClick={() => setShowAuthModal(true)}
-                className="p-2 hover:bg-surface-light rounded-lg transition-colors"
-                title="Sign In / Subscribe"
-              >
-                <UserCircle className="w-5 h-5 text-gray-400 hover:text-white transition-colors" />
-              </button>
+              {/* User Profile or Login Button */}
+              {user ? (
+                <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-white/5 border border-white/10">
+                  <div className="text-right">
+                    <p className="text-xs text-gray-400 uppercase tracking-widest">Signed In</p>
+                    <p className="text-sm font-mono text-white">{maskEmail(user.email || '')}</p>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="p-1.5 hover:bg-red-500/20 rounded-lg transition-colors ml-2 border-l border-white/10 pl-3"
+                    title="Sign Out"
+                  >
+                    <LogOut className="w-4 h-4 text-gray-400 hover:text-red-400 transition-colors" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setShowAuthModal(true)}
+                  className="p-2 hover:bg-surface-light rounded-lg transition-colors"
+                  title="Sign In / Subscribe"
+                >
+                  <UserCircle className="w-5 h-5 text-gray-400 hover:text-white transition-colors" />
+                </button>
+              )}
 
               {/* Filter Button */}
               <button

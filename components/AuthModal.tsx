@@ -143,16 +143,6 @@ export function AuthModal({ onClose, onSuccess }: AuthModalProps) {
               </div>
             </div>
 
-            {error && (
-              <div className={`p-4 rounded-xl text-sm ${
-                isSuccess
-                  ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400'
-                  : 'bg-red-500/10 border border-red-500/20 text-red-400'
-              }`}>
-                {error}
-              </div>
-            )}
-
             <button
               type="submit"
               disabled={loading}
@@ -184,6 +174,16 @@ export function AuthModal({ onClose, onSuccess }: AuthModalProps) {
           </div>
         </div>
       </div>
+
+      {/* Toast Notification */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+          duration={toast.type === 'success' ? 5000 : 4000}
+        />
+      )}
     </>
   )
 }
