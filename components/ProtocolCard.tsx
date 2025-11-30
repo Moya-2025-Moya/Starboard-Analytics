@@ -79,42 +79,42 @@ export function ProtocolCard({ protocol, onClick }: ProtocolCardProps) {
         {protocol.short_description}
       </p>
 
-      {/* Metrics - 2x2 Grid */}
-      <div className="grid grid-cols-2 gap-4 mb-4">
-        {/* Raised */}
-        <div>
-          <div className="flex items-center gap-1.5 mb-1">
-            <DollarSign className="w-3.5 h-3.5 text-gray-500" />
-            <span className="text-xs text-text-secondary">Raised</span>
+      {/* Metrics - 2 rows with icons on the left */}
+      <div className="space-y-3 mb-4">
+        {/* Row 1: Raised and Stage */}
+        <div className="flex items-center gap-6">
+          <DollarSign className="w-5 h-5 text-gray-400 flex-shrink-0" />
+          <div className="flex items-center justify-between flex-1">
+            <div>
+              <div className="text-xs text-text-secondary mb-0.5">Raised</div>
+              <div className="text-base font-bold">${(protocol.total_raised_usd / 1000000).toFixed(1)}M</div>
+            </div>
+            <div className="text-right">
+              <div className="flex items-center gap-1.5 justify-end mb-0.5">
+                <Calendar className="w-4 h-4 text-gray-500" />
+                <span className="text-xs text-text-secondary">Stage</span>
+              </div>
+              <div className="text-base font-bold">{stageBadges[protocol.stage]}</div>
+            </div>
           </div>
-          <div className="text-base font-bold">${(protocol.total_raised_usd / 1000000).toFixed(1)}M</div>
         </div>
 
-        {/* Stage */}
-        <div>
-          <div className="flex items-center gap-1.5 mb-1">
-            <Calendar className="w-3.5 h-3.5 text-gray-500" />
-            <span className="text-xs text-text-secondary">Stage</span>
+        {/* Row 2: Expected Costs and Listed For */}
+        <div className="flex items-center gap-6">
+          <DollarSign className="w-5 h-5 text-gray-400 flex-shrink-0" />
+          <div className="flex items-center justify-between flex-1">
+            <div>
+              <div className="text-xs text-text-secondary mb-0.5">Expected</div>
+              <div className="text-base font-bold">${protocol.expected_costs || 30}</div>
+            </div>
+            <div className="text-right">
+              <div className="flex items-center gap-1.5 justify-end mb-0.5">
+                <Calendar className="w-4 h-4 text-gray-500" />
+                <span className="text-xs text-text-secondary">Listed For</span>
+              </div>
+              <div className="text-base font-bold">{protocol.listed_days || 3} Days</div>
+            </div>
           </div>
-          <div className="text-base font-bold">{stageBadges[protocol.stage]}</div>
-        </div>
-
-        {/* Expected Costs */}
-        <div>
-          <div className="flex items-center gap-1.5 mb-1">
-            <DollarSign className="w-3.5 h-3.5 text-gray-500" />
-            <span className="text-xs text-text-secondary">Expected Costs</span>
-          </div>
-          <div className="text-base font-bold">${protocol.expected_costs || 30}</div>
-        </div>
-
-        {/* Listed For */}
-        <div>
-          <div className="flex items-center gap-1.5 mb-1">
-            <Calendar className="w-3.5 h-3.5 text-gray-500" />
-            <span className="text-xs text-text-secondary">Listed For</span>
-          </div>
-          <div className="text-base font-bold">{protocol.listed_days || 3} Days</div>
         </div>
       </div>
 
