@@ -38,7 +38,9 @@ export interface User {
   is_subscribed: boolean
   subscription_tier?: 'free' | 'premium'
   subscription_end_date?: string
+  role: 'user' | 'admin'
   created_at: string
+  updated_at: string
 }
 
 export interface Subscription {

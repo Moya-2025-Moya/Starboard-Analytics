@@ -1,26 +1,77 @@
 'use client'
 
-import { X, ExternalLink, TrendingUp, AlertTriangle, Target, LogOut } from 'lucide-react'
+import { useState, useRef, useEffect } from 'react'
+import { X, ExternalLink, TrendingUp, AlertTriangle, Target, LogOut, GripVertical } from 'lucide-react'
 import type { Protocol } from '@/types'
 
 interface DetailPanelProps {
-  protocol: Protocol
+  protocol: Protocol | null
   onClose: () => void
+  isOpen: boolean
 }
 
-export function DetailPanel({ protocol, onClose }: DetailPanelProps) {
+export function DetailPanel({ protocol, onClose, isOpen }: DetailPanelProps) {
+  const [width, setWidth] = useState(50) // percentage
+  const [isResizing, setIsResizing] = useState(false)
+  const panelRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizing) return
+
+      const newWidth = ((window.innerWidth - e.clientX) / window.innerWidth) * 100
+      setWidth(Math.max(30, Math.min(70, newWidth))) // Min 30%, max 70%
+    }
+
+    const handleMouseUp = () => {
+      setIsResizing(false)
+    }
+
+    if (isResizing) {
+      document.addEventListener('mousemove', handleMouseMove)
+      document.addEventListener('mouseup', handleMouseUp)
+      document.body.style.cursor = 'ew-resize'
+      document.body.style.userSelect = 'none'
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+      document.body.style.cursor = ''
+      document.body.style.userSelect = ''
+    }
+  }, [isResizing])
+
+  if (!isOpen || !protocol) return null
+
   return (
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 animate-fade-in"
+        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 animate-fade-in"
         onClick={onClose}
       />
 
       {/* Panel */}
-      <div className="fixed right-0 top-0 h-full w-full md:w-2/3 lg:w-1/2 bg-black/95 backdrop-blur-xl border-l border-white/10 z-50 overflow-y-auto animate-slide-in">
-        {/* Header */}
-        <div className="sticky top-0 bg-surface/95 backdrop-blur-xl border-b border-border p-6 flex items-center justify-between">
+      <div
+        ref={panelRef}
+        className="fixed right-0 top-0 h-full bg-black/95 backdrop-blur-xl border-l border-white/10 z-50 overflow-y-auto animate-slide-in flex"
+        style={{ width: `${width}%` }}
+      >
+        {/* Resize Handle */}
+        <div
+          className="absolute left-0 top-0 h-full w-1 hover:w-2 bg-border/50 hover:bg-white/30 cursor-ew-resize transition-all flex items-center justify-center group"
+          onMouseDown={() => setIsResizing(true)}
+        >
+          <div className="absolute left-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <GripVertical className="w-4 h-4 text-white/50" />
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto">
+          {/* Header */}
+          <div className="sticky top-0 bg-surface/95 backdrop-blur-xl border-b border-border p-6 flex items-center justify-between z-10">
           <div className="flex items-center gap-3">
             {protocol.logo_url ? (
               <img
@@ -43,16 +94,16 @@ export function DetailPanel({ protocol, onClose }: DetailPanelProps) {
             </div>
           </div>
 
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-surface-light rounded-lg transition-colors"
-          >
-            <X className="w-6 h-6" />
-          </button>
-        </div>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-surface-light rounded-lg transition-colors"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
 
-        {/* Content */}
-        <div className="p-6 space-y-6">
+          {/* Content */}
+          <div className="p-6 space-y-6">
           {/* Quick Stats */}
           <div className="grid grid-cols-3 gap-4">
             <div className="glass rounded-lg p-4">
@@ -241,9 +292,10 @@ export function DetailPanel({ protocol, onClose }: DetailPanelProps) {
             </div>
           </section>
 
-          {/* Metadata */}
-          <div className="text-xs text-text-secondary pt-4 border-t border-border">
-            Last updated: {new Date(protocol.last_updated).toLocaleDateString()}
+            {/* Metadata */}
+            <div className="text-xs text-text-secondary pt-4 border-t border-border">
+              Last updated: {new Date(protocol.last_updated).toLocaleDateString()}
+            </div>
           </div>
         </div>
       </div>

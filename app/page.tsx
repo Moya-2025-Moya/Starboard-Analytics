@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Header } from '@/components/Header'
 import { ProtocolCard } from '@/components/ProtocolCard'
 import { DetailPanel } from '@/components/DetailPanel'
@@ -14,7 +14,30 @@ export default function Home() {
   const [selectedProtocol, setSelectedProtocol] = useState<Protocol | null>(null)
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [isSubscribed, setIsSubscribed] = useState(false)
+  const [lastUpdate, setLastUpdate] = useState<string>('')
   const { protocols, loading } = useProtocols()
+
+  // Calculate the most recent update date from all protocols
+  useEffect(() => {
+    if (protocols.length > 0) {
+      const mostRecent = protocols.reduce((latest, protocol) => {
+        const protocolDate = new Date(protocol.last_updated)
+        return protocolDate > latest ? protocolDate : latest
+      }, new Date(protocols[0].last_updated))
+
+      setLastUpdate(mostRecent.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }))
+    } else {
+      setLastUpdate(new Date().toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }))
+    }
+  }, [protocols])
 
   const handleProtocolClick = (protocol: Protocol) => {
     if (!isSubscribed) {
@@ -29,21 +52,27 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen flex flex-col">
       <Header
         isSubscribed={isSubscribed}
         onAuthClick={() => setShowAuthModal(true)}
       />
 
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
+      <div className={`container mx-auto px-4 py-8 transition-all duration-300 ${selectedProtocol ? 'max-w-full pr-0' : 'max-w-7xl'}`}>
         {/* Hero Section */}
-        <div className="text-center mb-8 mt-4">
-          <h1 className="text-3xl font-bold mb-2 text-white">
+        <div className="text-center mb-8 mt-6">
+          <h1 className="text-4xl font-display font-bold mb-3 text-white tracking-wide">
             Starboard Analytics
           </h1>
-          <p className="text-text-secondary text-sm">
+          <p className="text-text-secondary text-sm mb-4">
             Primary market coverage for early-stage protocols
           </p>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg glass border border-border/50">
+            <span className="text-xs text-text-secondary font-mono uppercase tracking-wider">Last Update</span>
+            <span className="text-sm font-mono font-bold text-white">
+              {lastUpdate || 'Loading...'}
+            </span>
+          </div>
         </div>
 
         {/* Protocol Grid */}
@@ -52,7 +81,11 @@ export default function Home() {
             <div className="text-text-secondary">Loading protocols...</div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className={`grid gap-6 transition-all duration-300 ${
+            selectedProtocol
+              ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3'
+              : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+          }`}>
             {protocols.map((protocol) => (
               <ProtocolCard
                 key={protocol.id}
@@ -89,12 +122,11 @@ export default function Home() {
       </div>
 
       {/* Detail Panel */}
-      {selectedProtocol && (
-        <DetailPanel
-          protocol={selectedProtocol}
-          onClose={handleClosePanel}
-        />
-      )}
+      <DetailPanel
+        protocol={selectedProtocol}
+        onClose={handleClosePanel}
+        isOpen={!!selectedProtocol}
+      />
 
       {/* Auth Modal */}
       {showAuthModal && (

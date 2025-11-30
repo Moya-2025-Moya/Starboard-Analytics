@@ -10,6 +10,7 @@ CREATE TYPE protocol_stage AS ENUM ('seed', 'series-a', 'series-b', 'pre-tge', '
 CREATE TYPE category AS ENUM ('defi', 'infrastructure', 'gaming', 'nft', 'dao', 'layer1', 'layer2', 'other');
 CREATE TYPE subscription_tier AS ENUM ('free', 'premium');
 CREATE TYPE subscription_status AS ENUM ('active', 'cancelled', 'expired');
+CREATE TYPE user_role AS ENUM ('user', 'admin');
 
 -- Protocols table
 CREATE TABLE protocols (
@@ -49,7 +50,9 @@ CREATE TABLE users (
     is_subscribed BOOLEAN DEFAULT false,
     subscription_tier subscription_tier DEFAULT 'free',
     subscription_end_date TIMESTAMP WITH TIME ZONE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    role user_role DEFAULT 'user',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- Subscriptions table
@@ -86,6 +89,39 @@ CREATE POLICY "Protocols are viewable by everyone"
     ON protocols FOR SELECT
     USING (true);
 
+-- Protocols: Admins can insert protocols
+CREATE POLICY "Admins can insert protocols"
+    ON protocols FOR INSERT
+    WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM users
+            WHERE users.id = auth.uid()
+            AND users.role = 'admin'
+        )
+    );
+
+-- Protocols: Admins can update protocols
+CREATE POLICY "Admins can update protocols"
+    ON protocols FOR UPDATE
+    USING (
+        EXISTS (
+            SELECT 1 FROM users
+            WHERE users.id = auth.uid()
+            AND users.role = 'admin'
+        )
+    );
+
+-- Protocols: Admins can delete protocols
+CREATE POLICY "Admins can delete protocols"
+    ON protocols FOR DELETE
+    USING (
+        EXISTS (
+            SELECT 1 FROM users
+            WHERE users.id = auth.uid()
+            AND users.role = 'admin'
+        )
+    );
+
 -- Protocols: Only authenticated users can see detailed analysis
 CREATE POLICY "Detailed analysis for subscribers only"
     ON protocols FOR SELECT
@@ -113,12 +149,66 @@ CREATE POLICY "Users can view own subscriptions"
     ON subscriptions FOR SELECT
     USING (auth.uid() = user_id);
 
+-- Users: Admins can view all users
+CREATE POLICY "Admins can view all users"
+    ON users FOR SELECT
+    USING (
+        EXISTS (
+            SELECT 1 FROM users u
+            WHERE u.id = auth.uid()
+            AND u.role = 'admin'
+        )
+    );
+
+-- Users: Admins can update all users
+CREATE POLICY "Admins can update all users"
+    ON users FOR UPDATE
+    USING (
+        EXISTS (
+            SELECT 1 FROM users u
+            WHERE u.id = auth.uid()
+            AND u.role = 'admin'
+        )
+    );
+
+-- Subscriptions: Admins can view all subscriptions
+CREATE POLICY "Admins can view all subscriptions"
+    ON subscriptions FOR SELECT
+    USING (
+        EXISTS (
+            SELECT 1 FROM users
+            WHERE users.id = auth.uid()
+            AND users.role = 'admin'
+        )
+    );
+
+-- Subscriptions: Admins can manage all subscriptions
+CREATE POLICY "Admins can manage all subscriptions"
+    ON subscriptions FOR ALL
+    USING (
+        EXISTS (
+            SELECT 1 FROM users
+            WHERE users.id = auth.uid()
+            AND users.role = 'admin'
+        )
+    );
+
+-- Trigger for protocols last_updated
+CREATE TRIGGER update_protocols_last_updated
+    BEFORE UPDATE ON protocols
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Trigger for users updated_at
+CREATE TRIGGER update_users_updated_at
+    BEFORE UPDATE ON users
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
 -- Function to automatically create user profile on signup
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO public.users (id, email, is_subscribed, subscription_tier)
-    VALUES (NEW.id, NEW.email, false, 'free');
+    INSERT INTO public.users (id, email, is_subscribed, subscription_tier, role)
+    VALUES (NEW.id, NEW.email, false, 'free', 'user');
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
