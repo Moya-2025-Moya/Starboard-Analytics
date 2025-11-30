@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Filter, Settings, Anchor } from 'lucide-react'
+import { Filter, Settings, UserCircle } from 'lucide-react'
+import Image from 'next/image'
 import { ProtocolCard } from '@/components/ProtocolCard'
 import { DetailPanel } from '@/components/DetailPanel'
 import { AuthModal } from '@/components/AuthModal'
@@ -59,7 +60,13 @@ export default function Home() {
           <div className="flex items-center justify-between">
             {/* Left: Logo and Info */}
             <div className="flex items-center gap-3">
-              <Anchor className="w-8 h-8 text-white" />
+              <Image
+                src="/logo-anchor-white.png"
+                alt="Starboard Analytics"
+                width={32}
+                height={32}
+                className="w-8 h-8"
+              />
               <div>
                 <h1 className="text-xl font-display font-bold text-white tracking-wide">
                   Starboard Analytics
@@ -78,13 +85,13 @@ export default function Home() {
 
             {/* Right: Action Buttons */}
             <div className="flex items-center gap-2">
-              {/* Logo/Subscribe Button */}
+              {/* User/Login Button */}
               <button
                 onClick={() => setShowAuthModal(true)}
                 className="p-2 hover:bg-surface-light rounded-lg transition-colors"
-                title="Subscribe"
+                title="Sign In / Subscribe"
               >
-                <Anchor className="w-5 h-5 text-gray-400 hover:text-white transition-colors" />
+                <UserCircle className="w-5 h-5 text-gray-400 hover:text-white transition-colors" />
               </button>
 
               {/* Filter Button */}
