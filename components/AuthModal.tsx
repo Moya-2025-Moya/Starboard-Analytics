@@ -174,16 +174,6 @@ export function AuthModal({ onClose, onSuccess }: AuthModalProps) {
           </div>
         </div>
       </div>
-
-      {/* Toast Notification */}
-      {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast(null)}
-          duration={toast.type === 'success' ? 5000 : 4000}
-        />
-      )}
     </>
   )
 }
