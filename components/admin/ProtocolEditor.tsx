@@ -36,10 +36,14 @@ export function ProtocolEditor({ protocolId, onClose, onSave }: ProtocolEditorPr
     discord_url: '',
     is_featured: false,
     risk_factors: [],
+    expected_costs: 30,
+    listed_days: 3,
+    tasks: ['Daily Check-in', 'Staking', 'Social Tasks'],
   })
 
   const [investorInput, setInvestorInput] = useState('')
   const [riskFactorInput, setRiskFactorInput] = useState('')
+  const [taskInput, setTaskInput] = useState('')
 
   useEffect(() => {
     if (protocolId) {
@@ -155,9 +159,27 @@ export function ProtocolEditor({ protocolId, onClose, onSave }: ProtocolEditorPr
     })
   }
 
+  const addTask = () => {
+    if (taskInput.trim()) {
+      setFormData({
+        ...formData,
+        tasks: [...(formData.tasks || []), taskInput.trim()]
+      })
+      setTaskInput('')
+    }
+  }
+
+  const removeTask = (index: number) => {
+    setFormData({
+      ...formData,
+      tasks: formData.tasks?.filter((_, i) => i !== index)
+    })
+  }
+
   const previewProtocol: Protocol = {
     id: protocolId || 'preview',
     name: formData.name || 'Untitled Protocol',
+    logo_url: formData.logo_url,
     category: formData.category || 'infrastructure',
     stage: formData.stage || 'seed',
     risk_level: formData.risk_level || 'medium',
@@ -178,6 +200,9 @@ export function ProtocolEditor({ protocolId, onClose, onSave }: ProtocolEditorPr
     discord_url: formData.discord_url,
     risk_factors: formData.risk_factors,
     is_featured: formData.is_featured || false,
+    expected_costs: formData.expected_costs || 30,
+    listed_days: formData.listed_days || 3,
+    tasks: formData.tasks || ['Daily Check-in', 'Staking', 'Social Tasks'],
     last_updated: new Date().toISOString(),
     created_at: new Date().toISOString(),
   }
@@ -229,6 +254,22 @@ export function ProtocolEditor({ protocolId, onClose, onSave }: ProtocolEditorPr
                 className="w-full px-4 py-2 rounded-lg bg-surface border border-border focus:border-white transition-colors outline-none font-mono"
                 placeholder="Aethir Network"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-mono text-text-secondary mb-2">
+                Logo URL (Optional)
+              </label>
+              <input
+                type="url"
+                value={formData.logo_url}
+                onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
+                className="w-full px-4 py-2 rounded-lg bg-surface border border-border focus:border-white transition-colors outline-none font-mono text-sm"
+                placeholder="https://example.com/logo.png"
+              />
+              <p className="text-xs text-text-secondary mt-1 font-mono">
+                Leave empty to show first letter of protocol name
+              </p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -404,6 +445,35 @@ export function ProtocolEditor({ protocolId, onClose, onSave }: ProtocolEditorPr
               </div>
 
               <div>
+                <label className="block text-sm font-mono text-text-secondary mb-2">
+                  Expected Costs ($)
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={formData.expected_costs}
+                  onChange={(e) => setFormData({ ...formData, expected_costs: parseFloat(e.target.value) || 0 })}
+                  className="w-full px-4 py-2 rounded-lg bg-surface border border-border focus:border-white transition-colors outline-none font-mono"
+                  placeholder="30"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-mono text-text-secondary mb-2">
+                  Listed For (Days)
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  value={formData.listed_days}
+                  onChange={(e) => setFormData({ ...formData, listed_days: parseInt(e.target.value) || 1 })}
+                  className="w-full px-4 py-2 rounded-lg bg-surface border border-border focus:border-white transition-colors outline-none font-mono"
+                  placeholder="3"
+                />
+              </div>
+
+              <div>
                 <label className="flex items-center gap-2 text-sm font-mono">
                   <input
                     type="checkbox"
@@ -414,6 +484,42 @@ export function ProtocolEditor({ protocolId, onClose, onSave }: ProtocolEditorPr
                   Featured Protocol
                 </label>
               </div>
+            </div>
+          </div>
+
+          {/* Tasks - What to do */}
+          <div className="space-y-4 pt-6 border-t border-border">
+            <h3 className="text-lg font-display font-bold">What to do</h3>
+
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={taskInput}
+                onChange={(e) => setTaskInput(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && addTask()}
+                className="flex-1 px-4 py-2 rounded-lg bg-surface border border-border focus:border-white transition-colors outline-none font-mono text-sm"
+                placeholder="Daily Check-in"
+              />
+              <button
+                onClick={addTask}
+                className="px-4 py-2 rounded-lg bg-white text-black hover:bg-white/90 transition-colors font-mono text-sm"
+              >
+                Add
+              </button>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {formData.tasks?.map((task, index) => (
+                <div key={index} className="flex items-center gap-2 px-3 py-1 rounded-lg bg-surface-light">
+                  <span className="text-sm font-mono">{task}</span>
+                  <button
+                    onClick={() => removeTask(index)}
+                    className="text-text-secondary hover:text-white"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              ))}
             </div>
           </div>
 

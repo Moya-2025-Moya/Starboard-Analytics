@@ -30,6 +30,10 @@ export interface Protocol {
   last_updated: string
   created_at: string
   is_featured: boolean
+  // Fields from your design
+  expected_costs?: number
+  listed_days?: number
+  tasks?: string[]
 }
 
 export interface User {

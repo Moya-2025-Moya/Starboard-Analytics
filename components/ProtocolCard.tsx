@@ -1,17 +1,11 @@
 'use client'
 
-import { TrendingUp, Shield, DollarSign, Calendar, ExternalLink, Twitter } from 'lucide-react'
+import { DollarSign, Calendar, ExternalLink, Twitter, X } from 'lucide-react'
 import type { Protocol } from '@/types'
 
 interface ProtocolCardProps {
   protocol: Protocol
   onClick: () => void
-}
-
-const riskColors = {
-  low: 'text-gray-400',
-  medium: 'text-gray-300',
-  high: 'text-white',
 }
 
 const stageBadges = {
@@ -33,18 +27,39 @@ export function ProtocolCard({ protocol, onClick }: ProtocolCardProps) {
   return (
     <div
       onClick={onClick}
-      className="glass rounded-xl p-5 cursor-pointer border border-border hover:border-white/30 transition-all duration-300 hover:scale-[1.01]"
+      className="glass rounded-xl p-6 cursor-pointer border border-border hover:border-white/30 transition-all duration-300 hover:scale-[1.01] relative"
     >
-      {/* Header */}
+      {/* Header with Logo */}
       <div className="flex items-start justify-between mb-4">
-        <div>
-          <h3 className="font-display text-lg font-bold tracking-wide mb-1">{protocol.name}</h3>
-          <span className="text-xs text-text-secondary uppercase tracking-widest font-mono">
-            {protocol.category}
-          </span>
+        <div className="flex items-start gap-3">
+          {/* Logo */}
+          {protocol.logo_url ? (
+            <img
+              src={protocol.logo_url}
+              alt={protocol.name}
+              className="w-12 h-12 rounded-lg flex-shrink-0"
+            />
+          ) : (
+            <div className="w-12 h-12 rounded-lg bg-surface-light flex items-center justify-center flex-shrink-0">
+              <span className="text-xl font-bold text-white font-display">
+                {protocol.name[0]}
+              </span>
+            </div>
+          )}
+
+          {/* Name and Category */}
+          <div className="flex-1">
+            <h3 className="font-display text-base font-bold tracking-wide leading-tight mb-1">
+              {protocol.name}
+            </h3>
+            <span className="text-xs text-text-secondary uppercase tracking-widest">
+              {protocol.category}
+            </span>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        {/* Link Icons */}
+        <div className="flex items-center gap-1">
           {protocol.website_url && (
             <button
               onClick={(e) => handleLinkClick(e, protocol.website_url)}
@@ -71,75 +86,73 @@ export function ProtocolCard({ protocol, onClick }: ProtocolCardProps) {
         {protocol.short_description}
       </p>
 
-      {/* Metrics Grid */}
-      <div className="grid grid-cols-2 gap-x-4 gap-y-3 mb-4 text-sm">
-        <div className="flex items-center gap-2">
-          <DollarSign className="w-3.5 h-3.5 text-gray-500" />
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-xs text-text-secondary font-mono">Raised</span>
-            <span className="font-bold font-mono">${(protocol.total_raised_usd / 1000000).toFixed(1)}M</span>
+      {/* Metrics - Matching your design */}
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        {/* Raised */}
+        <div>
+          <div className="flex items-center gap-1.5 mb-1">
+            <DollarSign className="w-3.5 h-3.5 text-gray-500" />
+            <span className="text-xs text-text-secondary">Raised</span>
           </div>
+          <div className="text-base font-bold">${(protocol.total_raised_usd / 1000000).toFixed(1)}M</div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Calendar className="w-3.5 h-3.5 text-gray-500" />
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-xs text-text-secondary font-mono">Stage</span>
-            <span className="font-bold font-mono text-xs">{stageBadges[protocol.stage]}</span>
+        {/* Stage */}
+        <div>
+          <div className="flex items-center gap-1.5 mb-1">
+            <Calendar className="w-3.5 h-3.5 text-gray-500" />
+            <span className="text-xs text-text-secondary">Stage</span>
           </div>
+          <div className="text-base font-bold">{stageBadges[protocol.stage]}</div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <TrendingUp className="w-3.5 h-3.5 text-gray-500" />
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-xs text-text-secondary font-mono">Score</span>
-            <span className="font-bold font-mono">{protocol.ranking_score}</span>
+        {/* Expected Costs */}
+        <div>
+          <div className="flex items-center gap-1.5 mb-1">
+            <DollarSign className="w-3.5 h-3.5 text-gray-500" />
+            <span className="text-xs text-text-secondary">Expected Costs</span>
           </div>
+          <div className="text-base font-bold">${protocol.expected_costs || 30}</div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Shield className={`w-3.5 h-3.5 ${riskColors[protocol.risk_level]}`} />
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-xs text-text-secondary font-mono">Risk</span>
-            <span className={`font-bold font-mono text-xs capitalize ${riskColors[protocol.risk_level]}`}>
-              {protocol.risk_level}
-            </span>
+        {/* Listed For */}
+        <div>
+          <div className="flex items-center gap-1.5 mb-1">
+            <Calendar className="w-3.5 h-3.5 text-gray-500" />
+            <span className="text-xs text-text-secondary">Listed For</span>
           </div>
+          <div className="text-base font-bold">{protocol.listed_days || 3} Days</div>
         </div>
       </div>
 
-      {/* Airdrop Probability */}
-      <div className="space-y-1.5 mb-4">
-        <div className="flex justify-between text-xs">
-          <span className="text-text-secondary font-mono">Airdrop Probability</span>
-          <span className="font-bold font-mono">{protocol.airdrop_probability}%</span>
-        </div>
-        <div className="w-full h-1.5 bg-surface-light rounded-full overflow-hidden">
-          <div
-            className="h-full bg-gradient-to-r from-gray-500 to-white transition-all duration-500"
-            style={{ width: `${protocol.airdrop_probability}%` }}
-          />
+      {/* What to do */}
+      <div className="mb-4">
+        <div className="text-xs text-text-secondary mb-2">What to do</div>
+        <div className="flex flex-wrap gap-2">
+          {(protocol.tasks || ['Daily Check-in', 'Staking', 'Social Tasks']).map((task, index) => (
+            <span
+              key={index}
+              className="px-3 py-1 rounded bg-surface-light text-xs"
+            >
+              {task}
+            </span>
+          ))}
         </div>
       </div>
 
       {/* Lead Investors */}
       {protocol.lead_investors.length > 0 && (
-        <div className="pt-3 border-t border-border/30">
-          <div className="text-xs text-text-secondary mb-2 font-mono">Lead Investors</div>
-          <div className="flex flex-wrap gap-1.5">
-            {protocol.lead_investors.slice(0, 2).map((investor) => (
+        <div className="pt-4 border-t border-border/30">
+          <div className="text-xs text-text-secondary mb-2">Lead Investors</div>
+          <div className="flex flex-wrap gap-2">
+            {protocol.lead_investors.map((investor) => (
               <span
                 key={investor}
-                className="px-2 py-0.5 rounded bg-surface-light text-xs font-mono"
+                className="px-3 py-1 rounded bg-surface-light text-xs"
               >
                 {investor}
               </span>
             ))}
-            {protocol.lead_investors.length > 2 && (
-              <span className="px-2 py-0.5 rounded bg-surface-light text-xs text-text-secondary font-mono">
-                +{protocol.lead_investors.length - 2}
-              </span>
-            )}
           </div>
         </div>
       )}
