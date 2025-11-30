@@ -1,6 +1,6 @@
 'use client'
 
-import { DollarSign, Calendar, ExternalLink, Twitter, X } from 'lucide-react'
+import { TrendingUp, Layers, Wallet, Clock, ExternalLink, Twitter, X } from 'lucide-react'
 import type { Protocol } from '@/types'
 
 interface ProtocolCardProps {
@@ -79,41 +79,41 @@ export function ProtocolCard({ protocol, onClick }: ProtocolCardProps) {
         {protocol.short_description}
       </p>
 
-      {/* Metrics - 2 rows with icons on the left */}
-      <div className="space-y-3 mb-4">
-        {/* Row 1: Raised and Stage */}
-        <div className="flex items-center gap-6">
-          <DollarSign className="w-5 h-5 text-gray-400 flex-shrink-0" />
-          <div className="flex items-center justify-between flex-1">
-            <div>
-              <div className="text-xs text-text-secondary mb-0.5">Raised</div>
-              <div className="text-base font-bold">${(protocol.total_raised_usd / 1000000).toFixed(1)}M</div>
-            </div>
-            <div className="text-right">
-              <div className="flex items-center gap-1.5 justify-end mb-0.5">
-                <Calendar className="w-4 h-4 text-gray-500" />
-                <span className="text-xs text-text-secondary">Stage</span>
-              </div>
-              <div className="text-base font-bold">{stageBadges[protocol.stage]}</div>
-            </div>
+      {/* Metrics - Clean 2x2 Grid Layout */}
+      <div className="grid grid-cols-2 gap-x-8 gap-y-3 mb-4">
+        {/* Raised */}
+        <div className="flex items-center gap-3">
+          <TrendingUp className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+          <div>
+            <div className="text-xs text-text-secondary">Raised</div>
+            <div className="text-sm font-mono font-bold">${(protocol.total_raised_usd / 1000000).toFixed(1)}M</div>
           </div>
         </div>
 
-        {/* Row 2: Expected Costs and Listed For */}
-        <div className="flex items-center gap-6">
-          <DollarSign className="w-5 h-5 text-gray-400 flex-shrink-0" />
-          <div className="flex items-center justify-between flex-1">
-            <div>
-              <div className="text-xs text-text-secondary mb-0.5">Expected</div>
-              <div className="text-base font-bold">${protocol.expected_costs || 30}</div>
-            </div>
-            <div className="text-right">
-              <div className="flex items-center gap-1.5 justify-end mb-0.5">
-                <Calendar className="w-4 h-4 text-gray-500" />
-                <span className="text-xs text-text-secondary">Listed For</span>
-              </div>
-              <div className="text-base font-bold">{protocol.listed_days || 3} Days</div>
-            </div>
+        {/* Stage */}
+        <div className="flex items-center gap-3">
+          <Layers className="w-4 h-4 text-blue-400 flex-shrink-0" />
+          <div>
+            <div className="text-xs text-text-secondary">Stage</div>
+            <div className="text-sm font-mono font-bold">{stageBadges[protocol.stage]}</div>
+          </div>
+        </div>
+
+        {/* Expected Costs */}
+        <div className="flex items-center gap-3">
+          <Wallet className="w-4 h-4 text-purple-400 flex-shrink-0" />
+          <div>
+            <div className="text-xs text-text-secondary">Expected</div>
+            <div className="text-sm font-mono font-bold">${protocol.expected_costs || 30}</div>
+          </div>
+        </div>
+
+        {/* Listed For */}
+        <div className="flex items-center gap-3">
+          <Clock className="w-4 h-4 text-orange-400 flex-shrink-0" />
+          <div>
+            <div className="text-xs text-text-secondary">Listed</div>
+            <div className="text-sm font-mono font-bold">{protocol.listed_days || 3} Days</div>
           </div>
         </div>
       </div>
