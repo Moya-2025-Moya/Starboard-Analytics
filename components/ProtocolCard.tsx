@@ -86,7 +86,7 @@ export function ProtocolCard({ protocol, onClick }: ProtocolCardProps) {
           <TrendingUp className="w-4 h-4 text-emerald-400 flex-shrink-0" />
           <div>
             <div className="text-xs text-text-secondary">Raised</div>
-            <div className="text-sm font-mono text-white">${(protocol.total_raised_usd / 1000000).toFixed(1)}M</div>
+            <div className="text-base text-white">${(protocol.total_raised_usd / 1000000).toFixed(1)}M</div>
           </div>
         </div>
 
@@ -95,7 +95,7 @@ export function ProtocolCard({ protocol, onClick }: ProtocolCardProps) {
           <Layers className="w-4 h-4 text-blue-400 flex-shrink-0" />
           <div>
             <div className="text-xs text-text-secondary">Stage</div>
-            <div className="text-sm font-mono text-white">{stageBadges[protocol.stage]}</div>
+            <div className="text-base text-white">{stageBadges[protocol.stage]}</div>
           </div>
         </div>
 
@@ -104,7 +104,7 @@ export function ProtocolCard({ protocol, onClick }: ProtocolCardProps) {
           <Wallet className="w-4 h-4 text-purple-400 flex-shrink-0" />
           <div>
             <div className="text-xs text-text-secondary">Expected</div>
-            <div className="text-sm font-mono text-white">${protocol.expected_costs || 30}</div>
+            <div className="text-base text-white">${protocol.expected_costs || 30}</div>
           </div>
         </div>
 
@@ -113,7 +113,7 @@ export function ProtocolCard({ protocol, onClick }: ProtocolCardProps) {
           <Clock className="w-4 h-4 text-orange-400 flex-shrink-0" />
           <div>
             <div className="text-xs text-text-secondary">Listed</div>
-            <div className="text-sm font-mono text-white">{protocol.listed_days || 3} Days</div>
+            <div className="text-base text-white">{protocol.listed_days || 3} Days</div>
           </div>
         </div>
       </div>

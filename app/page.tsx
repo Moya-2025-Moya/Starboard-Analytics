@@ -71,15 +71,25 @@ export default function Home() {
                 <h1 className="text-xl font-display font-bold text-white tracking-wide">
                   Starboard Analytics
                 </h1>
-                <p className="text-xs text-text-secondary">
+                <p className="text-[10px] text-text-secondary">
                   Primary market coverage for early-stage protocols
                 </p>
               </div>
-              <div className="ml-4 px-3 py-1 rounded-lg glass border border-border/50">
-                <span className="text-xs text-text-secondary font-mono">Last Update: </span>
-                <span className="text-xs font-mono font-bold text-white">
-                  {lastUpdate || 'Loading...'}
-                </span>
+              {/* Flip Calendar Style Last Update */}
+              <div className="ml-4 flex items-center gap-2">
+                <span className="text-[10px] text-text-secondary uppercase tracking-wider">Last Update:</span>
+                <div className="flex gap-1">
+                  {lastUpdate.split('/').map((segment: string, index: number) => (
+                    <div
+                      key={index}
+                      className="bg-gradient-to-b from-white/10 to-white/5 border border-white/20 rounded px-2 py-1 shadow-lg"
+                    >
+                      <span className="text-sm font-bold text-white tracking-wider">
+                        {segment}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
