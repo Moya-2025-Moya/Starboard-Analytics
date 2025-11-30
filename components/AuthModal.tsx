@@ -15,23 +15,40 @@ export function AuthModal({ onClose, onSuccess }: AuthModalProps) {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isSuccess, setIsSuccess] = useState(false)
   const { signIn, signUp } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError(null)
+    setIsSuccess(false)
 
     try {
-      const { error } = isSignUp
+      const { data, error } = isSignUp
         ? await signUp(email, password)
         : await signIn(email, password)
 
+      console.log('Auth response:', { data, error })
+
       if (error) throw error
 
-      onSuccess()
+      if (isSignUp) {
+        // Show success message for sign up
+        setIsSuccess(true)
+        setError('Account created! Please check your email to confirm your account.')
+        setTimeout(() => {
+          setError(null)
+          setIsSuccess(false)
+        }, 5000)
+      } else {
+        // Sign in successful
+        onSuccess()
+      }
     } catch (err) {
+      console.error('Auth error:', err)
       setError(err instanceof Error ? err.message : 'Authentication failed')
+      setIsSuccess(false)
     } finally {
       setLoading(false)
     }
@@ -118,7 +135,11 @@ export function AuthModal({ onClose, onSuccess }: AuthModalProps) {
             </div>
 
             {error && (
-              <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+              <div className={`p-4 rounded-xl text-sm ${
+                isSuccess
+                  ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400'
+                  : 'bg-red-500/10 border border-red-500/20 text-red-400'
+              }`}>
                 {error}
               </div>
             )}
