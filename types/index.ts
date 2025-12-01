@@ -1,6 +1,7 @@
 export type RiskLevel = 'low' | 'medium' | 'high'
 export type ProtocolStage = 'seed' | 'series-a' | 'series-b' | 'pre-tge' | 'tge'
 export type Category = 'defi' | 'infrastructure' | 'gaming' | 'nft' | 'dao' | 'layer1' | 'layer2' | 'other'
+export type GradeLevel = 'A' | 'B' | 'C' | 'D' | 'E' | 'F'
 
 export interface Protocol {
   id: string
@@ -9,14 +10,12 @@ export interface Protocol {
   category: Category
   stage: ProtocolStage
   risk_level: RiskLevel
-  ranking_score: number
   total_raised_usd: number
   lead_investors: string[]
-  founding_team_score: number
-  vc_track_record_score: number
-  business_model_score: number
+  founding_team_grade: GradeLevel
+  vc_track_record_grade: GradeLevel
+  business_model_grade: GradeLevel
   strategy_forecast: string
-  airdrop_probability: number
   expected_tge_date?: string
   website_url?: string
   twitter_url?: string
@@ -32,7 +31,6 @@ export interface Protocol {
   is_featured: boolean
   // Fields from your design
   expected_costs?: number
-  listed_days?: number
   tasks?: string[]
   chains?: string[]
 }

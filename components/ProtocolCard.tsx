@@ -1,6 +1,6 @@
 'use client'
 
-import { TrendingUp, Layers, Wallet, Clock, ExternalLink, Twitter, X } from 'lucide-react'
+import { TrendingUp, Layers, Wallet, Clock, ExternalLink, Twitter } from 'lucide-react'
 import type { Protocol } from '@/types'
 
 interface ProtocolCardProps {
@@ -41,7 +41,7 @@ export function ProtocolCard({ protocol, onClick }: ProtocolCardProps) {
           </span>
         </div>
 
-        {/* Link Icons - X and Website */}
+        {/* Link Icons - Website and Twitter */}
         <div className="flex items-center gap-1">
           {protocol.website_url && (
             <button
@@ -61,16 +61,6 @@ export function ProtocolCard({ protocol, onClick }: ProtocolCardProps) {
               <Twitter className="w-4 h-4 text-gray-400 hover:text-white transition-colors" />
             </button>
           )}
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              onClick()
-            }}
-            className="p-1.5 hover:bg-surface-light rounded-lg transition-colors"
-            title="Close"
-          >
-            <X className="w-4 h-4 text-gray-400 hover:text-white transition-colors" />
-          </button>
         </div>
       </div>
 

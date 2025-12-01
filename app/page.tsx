@@ -113,17 +113,14 @@ export default function Home() {
             <div className="flex items-center gap-2">
               {/* User Profile or Login Button */}
               {user ? (
-                <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-white/5 border border-white/10">
-                  <div className="text-right">
-                    <p className="text-xs text-gray-400 uppercase tracking-widest">Signed In</p>
-                    <p className="text-sm font-mono text-white">{maskEmail(user.email || '')}</p>
-                  </div>
+                <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-white/5 border border-white/10 text-[10px]">
+                  <span className="text-gray-500 font-mono">{maskEmail(user.email || '')}</span>
                   <button
                     onClick={handleLogout}
-                    className="p-1.5 hover:bg-red-500/20 rounded-lg transition-colors ml-2 border-l border-white/10 pl-3"
+                    className="p-0.5 hover:bg-red-500/20 rounded transition-colors"
                     title="Sign Out"
                   >
-                    <LogOut className="w-4 h-4 text-gray-400 hover:text-red-400 transition-colors" />
+                    <LogOut className="w-3 h-3 text-gray-500 hover:text-red-400 transition-colors" />
                   </button>
                 </div>
               ) : (
