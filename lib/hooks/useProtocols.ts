@@ -17,7 +17,7 @@ export function useProtocols() {
       const { data, error } = await supabase
         .from('protocols')
         .select('*')
-        .order('ranking_score', { ascending: false })
+        .order('total_raised_usd', { ascending: false })
 
       if (error) throw error
 

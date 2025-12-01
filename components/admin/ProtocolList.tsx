@@ -78,7 +78,7 @@ export function ProtocolList({ onEdit }: ProtocolListProps) {
               <th className="text-left px-6 py-4 text-sm font-mono text-text-secondary">Name</th>
               <th className="text-left px-6 py-4 text-sm font-mono text-text-secondary">Category</th>
               <th className="text-left px-6 py-4 text-sm font-mono text-text-secondary">Stage</th>
-              <th className="text-left px-6 py-4 text-sm font-mono text-text-secondary">Score</th>
+              <th className="text-left px-6 py-4 text-sm font-mono text-text-secondary">Risk</th>
               <th className="text-left px-6 py-4 text-sm font-mono text-text-secondary">Raised</th>
               <th className="text-left px-6 py-4 text-sm font-mono text-text-secondary">Status</th>
               <th className="text-right px-6 py-4 text-sm font-mono text-text-secondary">Actions</th>
@@ -102,7 +102,7 @@ export function ProtocolList({ onEdit }: ProtocolListProps) {
                   <span className="text-sm font-mono">{protocol.stage}</span>
                 </td>
                 <td className="px-6 py-4">
-                  <span className="font-bold font-mono">{protocol.ranking_score}</span>
+                  <span className="font-bold font-mono uppercase text-sm">{protocol.risk_level}</span>
                 </td>
                 <td className="px-6 py-4">
                   <span className="font-mono text-sm">

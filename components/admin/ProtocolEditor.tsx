@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { X, Eye, Save, Trash2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 import { ProtocolCard } from '@/components/ProtocolCard'
-import type { Protocol, Category, ProtocolStage, RiskLevel } from '@/types'
+import type { Protocol, Category, ProtocolStage, RiskLevel, GradeLevel } from '@/types'
 
 interface ProtocolEditorProps {
   protocolId: string | null
@@ -20,13 +20,11 @@ export function ProtocolEditor({ protocolId, onClose, onSave }: ProtocolEditorPr
     category: 'infrastructure',
     stage: 'seed',
     risk_level: 'medium',
-    ranking_score: 0,
     total_raised_usd: 0,
     lead_investors: [],
-    founding_team_score: 0,
-    vc_track_record_score: 0,
-    business_model_score: 0,
-    airdrop_probability: 0,
+    founding_team_grade: 'A',
+    vc_track_record_grade: 'A',
+    business_model_grade: 'A',
     short_description: '',
     detailed_analysis: '',
     entry_strategy: '',
@@ -37,7 +35,6 @@ export function ProtocolEditor({ protocolId, onClose, onSave }: ProtocolEditorPr
     is_featured: false,
     risk_factors: [],
     expected_costs: 30,
-    listed_days: 3,
     tasks: ['Daily Check-in', 'Staking', 'Social Tasks'],
     chains: [],
   })
@@ -202,14 +199,12 @@ export function ProtocolEditor({ protocolId, onClose, onSave }: ProtocolEditorPr
     category: formData.category || 'infrastructure',
     stage: formData.stage || 'seed',
     risk_level: formData.risk_level || 'medium',
-    ranking_score: formData.ranking_score || 0,
     total_raised_usd: formData.total_raised_usd || 0,
     lead_investors: formData.lead_investors || [],
-    founding_team_score: formData.founding_team_score || 0,
-    vc_track_record_score: formData.vc_track_record_score || 0,
-    business_model_score: formData.business_model_score || 0,
+    founding_team_grade: formData.founding_team_grade || 'A',
+    vc_track_record_grade: formData.vc_track_record_grade || 'A',
+    business_model_grade: formData.business_model_grade || 'A',
     strategy_forecast: formData.strategy_forecast || '',
-    airdrop_probability: formData.airdrop_probability || 0,
     short_description: formData.short_description || '',
     detailed_analysis: formData.detailed_analysis,
     entry_strategy: formData.entry_strategy,
@@ -220,7 +215,6 @@ export function ProtocolEditor({ protocolId, onClose, onSave }: ProtocolEditorPr
     risk_factors: formData.risk_factors,
     is_featured: formData.is_featured || false,
     expected_costs: formData.expected_costs || 30,
-    listed_days: formData.listed_days || 3,
     tasks: formData.tasks || ['Daily Check-in', 'Staking', 'Social Tasks'],
     chains: formData.chains || [],
     last_updated: new Date().toISOString(),
@@ -360,22 +354,9 @@ export function ProtocolEditor({ protocolId, onClose, onSave }: ProtocolEditorPr
 
           {/* Metrics */}
           <div className="space-y-4 pt-6 border-t border-border">
-            <h3 className="text-lg font-display font-bold">Metrics & Scores</h3>
+            <h3 className="text-lg font-display font-bold">Metrics & Grades</h3>
 
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-mono text-text-secondary mb-2">
-                  Ranking Score
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={formData.ranking_score}
-                  onChange={(e) => setFormData({ ...formData, ranking_score: parseFloat(e.target.value) || 0 })}
-                  className="w-full px-4 py-2 rounded-lg bg-surface border border-border focus:border-white transition-colors outline-none font-mono"
-                />
-              </div>
-
               <div>
                 <label className="block text-sm font-mono text-text-secondary mb-2">
                   Risk Level
@@ -406,62 +387,56 @@ export function ProtocolEditor({ protocolId, onClose, onSave }: ProtocolEditorPr
 
               <div>
                 <label className="block text-sm font-mono text-text-secondary mb-2">
-                  Airdrop Probability (%)
+                  Founding Team Grade *
                 </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="100"
-                  value={formData.airdrop_probability}
-                  onChange={(e) => setFormData({ ...formData, airdrop_probability: parseFloat(e.target.value) || 0 })}
+                <select
+                  value={formData.founding_team_grade}
+                  onChange={(e) => setFormData({ ...formData, founding_team_grade: e.target.value as GradeLevel })}
                   className="w-full px-4 py-2 rounded-lg bg-surface border border-border focus:border-white transition-colors outline-none font-mono"
-                />
+                >
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                  <option value="E">E</option>
+                  <option value="F">F</option>
+                </select>
               </div>
 
               <div>
                 <label className="block text-sm font-mono text-text-secondary mb-2">
-                  Founding Team Score
+                  VC Track Record Grade *
                 </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="100"
-                  value={formData.founding_team_score}
-                  onChange={(e) => setFormData({ ...formData, founding_team_score: parseFloat(e.target.value) || 0 })}
+                <select
+                  value={formData.vc_track_record_grade}
+                  onChange={(e) => setFormData({ ...formData, vc_track_record_grade: e.target.value as GradeLevel })}
                   className="w-full px-4 py-2 rounded-lg bg-surface border border-border focus:border-white transition-colors outline-none font-mono"
-                />
+                >
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                  <option value="E">E</option>
+                  <option value="F">F</option>
+                </select>
               </div>
 
               <div>
                 <label className="block text-sm font-mono text-text-secondary mb-2">
-                  VC Track Record Score
+                  Business Model Grade *
                 </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="100"
-                  value={formData.vc_track_record_score}
-                  onChange={(e) => setFormData({ ...formData, vc_track_record_score: parseFloat(e.target.value) || 0 })}
+                <select
+                  value={formData.business_model_grade}
+                  onChange={(e) => setFormData({ ...formData, business_model_grade: e.target.value as GradeLevel })}
                   className="w-full px-4 py-2 rounded-lg bg-surface border border-border focus:border-white transition-colors outline-none font-mono"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-mono text-text-secondary mb-2">
-                  Business Model Score
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="100"
-                  value={formData.business_model_score}
-                  onChange={(e) => setFormData({ ...formData, business_model_score: parseFloat(e.target.value) || 0 })}
-                  className="w-full px-4 py-2 rounded-lg bg-surface border border-border focus:border-white transition-colors outline-none font-mono"
-                />
+                >
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                  <option value="E">E</option>
+                  <option value="F">F</option>
+                </select>
               </div>
 
               <div>
@@ -476,20 +451,6 @@ export function ProtocolEditor({ protocolId, onClose, onSave }: ProtocolEditorPr
                   onChange={(e) => setFormData({ ...formData, expected_costs: parseFloat(e.target.value) || 0 })}
                   className="w-full px-4 py-2 rounded-lg bg-surface border border-border focus:border-white transition-colors outline-none font-mono"
                   placeholder="30"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-mono text-text-secondary mb-2">
-                  Listed For (Days)
-                </label>
-                <input
-                  type="number"
-                  min="1"
-                  value={formData.listed_days}
-                  onChange={(e) => setFormData({ ...formData, listed_days: parseInt(e.target.value) || 1 })}
-                  className="w-full px-4 py-2 rounded-lg bg-surface border border-border focus:border-white transition-colors outline-none font-mono"
-                  placeholder="3"
                 />
               </div>
 

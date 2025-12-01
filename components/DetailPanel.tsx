@@ -105,23 +105,17 @@ export function DetailPanel({ protocol, onClose, isOpen }: DetailPanelProps) {
           {/* Content */}
           <div className="p-6 space-y-6">
           {/* Quick Stats */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <div className="glass rounded-lg p-4">
-              <div className="text-text-secondary text-sm mb-1">Ranking Score</div>
-              <div className="text-2xl font-bold text-white">
-                {protocol.ranking_score}
+              <div className="text-text-secondary text-sm mb-1">Risk Level</div>
+              <div className="text-2xl font-bold text-white uppercase">
+                {protocol.risk_level}
               </div>
             </div>
             <div className="glass rounded-lg p-4">
               <div className="text-text-secondary text-sm mb-1">Total Raised</div>
               <div className="text-2xl font-bold text-white">
                 ${(protocol.total_raised_usd / 1000000).toFixed(1)}M
-              </div>
-            </div>
-            <div className="glass rounded-lg p-4">
-              <div className="text-text-secondary text-sm mb-1">Airdrop %</div>
-              <div className="text-2xl font-bold text-white">
-                {protocol.airdrop_probability}%
               </div>
             </div>
           </div>
@@ -147,46 +141,28 @@ export function DetailPanel({ protocol, onClose, isOpen }: DetailPanelProps) {
             </section>
           )}
 
-          {/* Due Diligence Scores */}
+          {/* Due Diligence Grades */}
           <section>
             <h3 className="text-lg font-bold mb-4">Due Diligence Breakdown</h3>
-            <div className="space-y-4">
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-text-secondary">Founding Team</span>
-                  <span className="font-medium">{protocol.founding_team_score}/100</span>
-                </div>
-                <div className="w-full h-2 bg-surface-light rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-gray-400 to-white"
-                    style={{ width: `${protocol.founding_team_score}%` }}
-                  />
+            <div className="grid grid-cols-3 gap-3">
+              <div className="glass rounded-lg p-4 text-center">
+                <div className="text-text-secondary text-xs mb-2">Founding Team</div>
+                <div className="text-4xl font-bold text-white">
+                  {protocol.founding_team_grade}
                 </div>
               </div>
 
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-text-secondary">VC Track Record</span>
-                  <span className="font-medium">{protocol.vc_track_record_score}/100</span>
-                </div>
-                <div className="w-full h-2 bg-surface-light rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-gray-400 to-white"
-                    style={{ width: `${protocol.vc_track_record_score}%` }}
-                  />
+              <div className="glass rounded-lg p-4 text-center">
+                <div className="text-text-secondary text-xs mb-2">VC Track Record</div>
+                <div className="text-4xl font-bold text-white">
+                  {protocol.vc_track_record_grade}
                 </div>
               </div>
 
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-text-secondary">Business Model</span>
-                  <span className="font-medium">{protocol.business_model_score}/100</span>
-                </div>
-                <div className="w-full h-2 bg-surface-light rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-gray-400 to-white"
-                    style={{ width: `${protocol.business_model_score}%` }}
-                  />
+              <div className="glass rounded-lg p-4 text-center">
+                <div className="text-text-secondary text-xs mb-2">Business Model</div>
+                <div className="text-4xl font-bold text-white">
+                  {protocol.business_model_grade}
                 </div>
               </div>
             </div>

@@ -103,7 +103,9 @@ export function ProtocolCard({ protocol, onClick }: ProtocolCardProps) {
           <Clock className="w-4 h-4 text-orange-400 flex-shrink-0" />
           <div>
             <div className="text-xs text-text-secondary">Listed</div>
-            <div className="text-base text-white">{protocol.listed_days || 3} Days</div>
+            <div className="text-base text-white">
+              {Math.floor((new Date().getTime() - new Date(protocol.created_at).getTime()) / (1000 * 60 * 60 * 24))} Days
+            </div>
           </div>
         </div>
       </div>
