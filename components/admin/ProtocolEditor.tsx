@@ -83,28 +83,56 @@ export function ProtocolEditor({ protocolId, onClose, onSave }: ProtocolEditorPr
   async function handleSave() {
     setLoading(true)
     try {
+      // Validate required fields
+      if (!formData.name?.trim()) {
+        alert('Protocol name is required')
+        setLoading(false)
+        return
+      }
+
+      if (!formData.short_description?.trim()) {
+        alert('Short description is required')
+        setLoading(false)
+        return
+      }
+
       if (protocolId) {
         // Update existing
-        const { error } = await supabase
+        console.log('Updating protocol with data:', formData)
+        const { data, error } = await supabase
           .from('protocols')
           .update(formData)
           .eq('id', protocolId)
+          .select()
 
-        if (error) throw error
+        if (error) {
+          console.error('Supabase error:', error)
+          throw new Error(`Failed to update protocol: ${error.message}`)
+        }
+
+        console.log('Update response:', data)
       } else {
         // Create new
-        const { error } = await supabase
+        console.log('Creating new protocol with data:', formData)
+        const { data, error } = await supabase
           .from('protocols')
           .insert([formData])
+          .select()
 
-        if (error) throw error
+        if (error) {
+          console.error('Supabase error:', error)
+          throw new Error(`Failed to create protocol: ${error.message}`)
+        }
+
+        console.log('Insert response:', data)
       }
 
       alert('Protocol saved successfully!')
       onSave()
     } catch (error) {
       console.error('Error saving protocol:', error)
-      alert('Failed to save protocol')
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
+      alert(`Failed to save protocol: ${errorMessage}`)
     } finally {
       setLoading(false)
     }
