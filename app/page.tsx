@@ -153,19 +153,19 @@ export default function Home() {
         </div>
       </div>
 
-      <div className={`container mx-auto px-6 py-6 transition-all duration-300 ${selectedProtocol ? 'max-w-full pr-0' : 'max-w-7xl'}`}>
-
-        {/* Protocol Grid */}
-        {loading ? (
-          <div className="flex items-center justify-center h-64">
-            <div className="text-text-secondary">Loading protocols...</div>
-          </div>
-        ) : (
-          <div className={`grid gap-6 transition-all duration-300 ${
-            selectedProtocol
-              ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3'
-              : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
-          }`}>
+      <div className={`transition-all duration-300 ${selectedProtocol ? 'mr-[50%]' : ''}`}>
+        <div className="container mx-auto px-6 py-6">
+          {/* Protocol Grid */}
+          {loading ? (
+            <div className="flex items-center justify-center h-64">
+              <div className="text-text-secondary">Loading protocols...</div>
+            </div>
+          ) : (
+            <div className={`grid gap-6 transition-all duration-300 ${
+              selectedProtocol
+                ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-2'
+                : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+            }`}>
             {protocols.map((protocol) => (
               <ProtocolCard
                 key={protocol.id}
@@ -176,11 +176,12 @@ export default function Home() {
           </div>
         )}
 
-        {protocols.length === 0 && !loading && (
-          <div className="text-center py-12 text-text-secondary">
-            No protocols found. Check back soon!
-          </div>
-        )}
+          {protocols.length === 0 && !loading && (
+            <div className="text-center py-12 text-text-secondary">
+              No protocols found. Check back soon!
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Detail Panel */}
