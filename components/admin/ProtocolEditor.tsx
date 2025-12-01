@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { X, Eye, Save, Trash2 } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { X, Eye, Save, Trash2, Upload, GripVertical } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 import { ProtocolCard } from '@/components/ProtocolCard'
 import type { Protocol, Category, ProtocolStage, RiskLevel, GradeLevel } from '@/types'
@@ -12,9 +12,18 @@ interface ProtocolEditorProps {
   onSave: () => void
 }
 
+interface ImageItem {
+  id: string
+  base64: string
+  name: string
+}
+
 export function ProtocolEditor({ protocolId, onClose, onSave }: ProtocolEditorProps) {
   const [loading, setLoading] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
+  const [images, setImages] = useState<ImageItem[]>([])
+  const [draggedImageId, setDraggedImageId] = useState<string | null>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [formData, setFormData] = useState<Partial<Protocol>>({
     name: '',
     category: 'infrastructure',
@@ -192,6 +201,60 @@ export function ProtocolEditor({ protocolId, onClose, onSave }: ProtocolEditorPr
     })
   }
 
+  const handleImageUpload = (file: File) => {
+    if (!file.type.startsWith('image/')) return
+
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const base64 = e.target?.result as string
+      const newImage: ImageItem = {
+        id: Date.now().toString(),
+        base64,
+        name: file.name
+      }
+      setImages([...images, newImage])
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.currentTarget.classList.add('border-white')
+  }
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.currentTarget.classList.remove('border-white')
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.currentTarget.classList.remove('border-white')
+
+    const files = Array.from(e.dataTransfer.files)
+    files.forEach(file => handleImageUpload(file))
+  }
+
+  const handlePaste = (e: React.ClipboardEvent) => {
+    const items = e.clipboardData.items
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.startsWith('image/')) {
+        const file = items[i].getAsFile()
+        if (file) handleImageUpload(file)
+      }
+    }
+  }
+
+  const reorderImages = (fromIndex: number, toIndex: number) => {
+    const newImages = [...images]
+    const [movedImage] = newImages.splice(fromIndex, 1)
+    newImages.splice(toIndex, 0, movedImage)
+    setImages(newImages)
+  }
+
+  const removeImage = (id: string) => {
+    setImages(images.filter(img => img.id !== id))
+  }
+
   const previewProtocol: Protocol = {
     id: protocolId || 'preview',
     name: formData.name || 'Untitled Protocol',
@@ -342,13 +405,65 @@ export function ProtocolEditor({ protocolId, onClose, onSave }: ProtocolEditorPr
               <label className="block text-sm font-mono text-text-secondary mb-2">
                 Detailed Analysis
               </label>
-              <textarea
-                value={formData.detailed_analysis}
-                onChange={(e) => setFormData({ ...formData, detailed_analysis: e.target.value })}
-                rows={4}
-                className="w-full px-4 py-2 rounded-lg bg-surface border border-border focus:border-white transition-colors outline-none font-mono text-sm"
-                placeholder="In-depth analysis for premium users..."
-              />
+              <div className="space-y-3">
+                <textarea
+                  ref={textareaRef}
+                  value={formData.detailed_analysis}
+                  onChange={(e) => setFormData({ ...formData, detailed_analysis: e.target.value })}
+                  onPaste={handlePaste}
+                  rows={4}
+                  className="w-full px-4 py-2 rounded-lg bg-surface border border-border focus:border-white transition-colors outline-none font-mono text-sm"
+                  placeholder="In-depth analysis for premium users..."
+                />
+
+                {/* Image Upload Area */}
+                <div
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  className="border-2 border-dashed border-border rounded-lg p-4 text-center cursor-pointer hover:border-white/50 transition-colors"
+                >
+                  <Upload className="w-5 h-5 text-gray-500 mx-auto mb-2" />
+                  <p className="text-xs text-text-secondary mb-1">Drag & drop images here or paste from clipboard</p>
+                  <p className="text-xs text-gray-600">Supports PNG, JPG, GIF, WebP</p>
+                </div>
+
+                {/* Images Preview */}
+                {images.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-xs text-text-secondary">Images ({images.length})</p>
+                    <div className="space-y-2 max-h-48 overflow-y-auto">
+                      {images.map((img, index) => (
+                        <div
+                          key={img.id}
+                          draggable
+                          onDragStart={() => setDraggedImageId(img.id)}
+                          onDragOver={(e) => e.preventDefault()}
+                          onDrop={(e) => {
+                            e.preventDefault()
+                            if (draggedImageId) {
+                              const fromIndex = images.findIndex(i => i.id === draggedImageId)
+                              reorderImages(fromIndex, index)
+                              setDraggedImageId(null)
+                            }
+                          }}
+                          className="flex items-center gap-2 p-2 bg-surface-light rounded-lg group cursor-move hover:bg-surface-light/80 transition-colors"
+                        >
+                          <GripVertical className="w-4 h-4 text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <img src={img.base64} alt={img.name} className="w-8 h-8 rounded object-cover" />
+                          <span className="text-xs text-gray-400 flex-1 truncate">{img.name}</span>
+                          <button
+                            onClick={() => removeImage(img.id)}
+                            className="p-1 hover:bg-red-500/20 rounded transition-colors opacity-0 group-hover:opacity-100"
+                          >
+                            <X className="w-3 h-3 text-red-400" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
