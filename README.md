@@ -1,6 +1,15 @@
 # Starboard Analytics
 
+> 加密货币空投协议分析平台 | Crypto Airdrop Protocol Analytics Platform
+
 Primary-market coverage platform for early-stage crypto protocols. Track projects from seed fundraising through TGE for maximum airdrop returns.
+
+## 📚 快速导航 Quick Links
+
+- **🚨 Admin保存问题?** → 立即查看 [ONE_CLICK_FIX.sql](ONE_CLICK_FIX.sql)
+- **📖 详细指南** → [QUICK_FIX_GUIDE.md](QUICK_FIX_GUIDE.md)
+- **🇨🇳 中文说明** → [使用说明书.md](使用说明书.md)
+- **⚙️ 首次设置** → [SETUP.md](SETUP.md)
 
 ## Features
 
@@ -9,6 +18,7 @@ Primary-market coverage platform for early-stage crypto protocols. Track project
 - **Risk Assessment**: Multi-factor risk analysis for informed decision-making
 - **Entry/Exit Strategies**: Actionable farming strategies for each protocol (Premium)
 - **Real-time Updates**: Stay ahead with the latest protocol developments
+- **Admin Panel**: Full protocol management with WYSIWYG editor
 
 ## Tech Stack
 
@@ -160,12 +170,44 @@ Edit `tailwind.config.ts` to customize the color scheme:
 - Add new pages in `app/`
 - Extend database schema in Supabase SQL Editor
 
+## 🚨 Admin保存失败？立即修复！
+
+如果在admin面板无法保存protocol，显示 "new row violates row-level security policy"：
+
+1. 打开 Supabase Dashboard → SQL Editor
+2. 复制粘贴 [ONE_CLICK_FIX.sql](ONE_CLICK_FIX.sql) 的所有内容
+3. 点击 Run
+4. 刷新浏览器页面
+5. 完成！
+
+详细诊断：[QUICK_FIX_GUIDE.md](QUICK_FIX_GUIDE.md)
+
+## 📁 项目文档
+
+### 核心文档
+- [README.md](README.md) - 本文件，项目概览
+- [使用说明书.md](使用说明书.md) - 完整中文使用手册
+- [SETUP.md](SETUP.md) - 详细设置说明
+
+### 问题修复
+- [ONE_CLICK_FIX.sql](ONE_CLICK_FIX.sql) - 一键修复admin保存问题
+- [QUICK_FIX_GUIDE.md](QUICK_FIX_GUIDE.md) - 完整故障排除指南
+- [migrations/FIX_RLS_POLICY_NOW.sql](migrations/FIX_RLS_POLICY_NOW.sql) - RLS策略修复
+
+### 数据库
+- [supabase-schema.sql](supabase-schema.sql) - 完整数据库Schema
+
+### 归档文档
+- `docs/archive/` - 旧版文档
+- `docs/fixes/` - 历史修复记录
+
 ## Support
 
 For issues or questions:
-- Check Supabase documentation: [docs.supabase.com](https://supabase.com/docs)
-- Check Next.js documentation: [nextjs.org/docs](https://nextjs.org/docs)
-- Check Vercel documentation: [vercel.com/docs](https://vercel.com/docs)
+- **Admin无法保存** → 运行 [ONE_CLICK_FIX.sql](ONE_CLICK_FIX.sql)
+- **其他问题** → 查看 [QUICK_FIX_GUIDE.md](QUICK_FIX_GUIDE.md)
+- Supabase文档: [docs.supabase.com](https://supabase.com/docs)
+- Next.js文档: [nextjs.org/docs](https://nextjs.org/docs)
 
 ## License
 
