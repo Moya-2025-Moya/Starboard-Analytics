@@ -72,34 +72,18 @@ export function DetailPanel({ protocol, onClose, isOpen }: DetailPanelProps) {
         <div className="flex-1 overflow-y-auto">
           {/* Header */}
           <div className="sticky top-0 bg-surface/95 backdrop-blur-xl border-b border-border p-6 flex items-center justify-between z-10">
-          <div className="flex items-center gap-3">
-            {protocol.logo_url ? (
-              <img
-                src={protocol.logo_url}
-                alt={protocol.name}
-                className="w-12 h-12 rounded-lg"
-              />
-            ) : (
-              <div className="w-12 h-12 rounded-lg bg-surface-light flex items-center justify-center">
-                <span className="text-xl font-bold text-white">
-                  {protocol.name[0]}
-                </span>
-              </div>
-            )}
-            <div>
-              <h2 className="text-2xl font-bold">{protocol.name}</h2>
-              <p className="text-text-secondary text-sm uppercase tracking-wide">
-                {protocol.category}
-              </p>
-            </div>
+          <div>
+            <h2 className="text-2xl font-bold">{protocol.name}</h2>
+            <p className="text-text-secondary text-sm uppercase tracking-wide">
+              {protocol.category}
+            </p>
           </div>
-
-            <button
-              onClick={onClose}
-              className="p-2 hover:bg-surface-light rounded-lg transition-colors"
-            >
-              <X className="w-6 h-6" />
-            </button>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-surface-light rounded-lg transition-colors"
+          >
+            <X className="w-6 h-6" />
+          </button>
           </div>
 
           {/* Content */}
